@@ -1,0 +1,12 @@
+/* Sayfaya enjekte edilen tek element: shadow root'u barındıran host.
+   Asıl stiller shadow DOM içinde tanımlıdır; böylece sayfanın kendi CSS'i
+   bizim arayüzümüzü, biz de sayfanın görünümünü bozmayız. */
+#__yorum_toplayici_host__ {
+  all: initial;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 2147483647;
+}

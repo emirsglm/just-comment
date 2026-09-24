@@ -1,0 +1,84 @@
+* { box-sizing: border-box; }
+
+body {
+  width: 380px;
+  margin: 0;
+  padding: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 13px;
+  color: #0f172a;
+  background: #fff;
+}
+
+header h1 { margin: 0; font-size: 15px; }
+.hint { margin: 2px 0 10px; font-size: 11px; color: #64748b; }
+
+button {
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+}
+button:disabled { opacity: .5; cursor: default; }
+button.primary { background: #e11d48; border-color: #e11d48; color: #fff; width: 100%; padding: 9px; font-size: 13px; }
+button.primary.on { background: #0f172a; border-color: #0f172a; }
+button.danger { color: #b91c1c; border-color: #fecaca; }
+
+.status {
+  display: none;
+  margin-top: 8px;
+  padding: 7px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.status.show { display: block; }
+.status.ok { background: #f0fdf4; color: #15803d; }
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 8px;
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+}
+.bar-buttons { display: flex; gap: 6px; }
+#count { font-size: 12px; color: #475569; }
+
+.list { list-style: none; margin: 0; padding: 0; max-height: 320px; overflow-y: auto; }
+.list li {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.list img {
+  width: 76px;
+  height: 52px;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  flex: none;
+  background: #f8fafc;
+}
+.list .body { min-width: 0; flex: 1; }
+.list .comment { font-size: 12px; margin: 0 0 3px; }
+.list .sel {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  color: #e11d48;
+  word-break: break-all;
+}
+.list .url {
+  font-size: 10px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.empty { color: #94a3b8; font-size: 12px; padding: 14px 0; text-align: center; }

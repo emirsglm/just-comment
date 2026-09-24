@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Yorum Toplayıcı</h1>
+    <p class="hint">Tüm veriler yalnızca bu bilgisayarda tutulur.</p>
+  </header>
+
+  <div class="actions">
+    <button id="toggle" class="primary" type="button">Yorum modunu aç</button>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <div class="bar">
+    <span id="count">0 yorum</span>
+    <span class="bar-buttons">
+      <button id="download" type="button">Raporu İndir</button>
+      <button id="clear" class="danger" type="button">Tümünü Temizle</button>
+    </span>
+  </div>
+
+  <ul id="list" class="list"></ul>
+
+  <script src="popup.js"></script>
+</body>
+</html>

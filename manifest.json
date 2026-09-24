@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Yorum Toplayıcı (Yerel Test Notları)",
+  "version": "1.0.0",
+  "description": "Canlı sitelerde tıkladığın komponentin ekran görüntüsünü ve yorumunu tamamen yerel olarak toplar. Hiçbir ağ isteği yapmaz.",
+  "permissions": ["activeTab", "scripting", "storage", "downloads"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Yorum Toplayıcı"
+  }
+}

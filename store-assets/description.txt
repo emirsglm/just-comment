@@ -1,0 +1,48 @@
+JUST COMMENT — Point, click, comment.
+
+Just Comment makes manual web testing painless. Click any element on a live website to capture an annotated screenshot, your comment and the element's CSS selector, or snip any area of the page. When you're done, export everything as a single HTML report you can share with your team.
+
+★ 100% LOCAL & PRIVATE
+• No network requests, no analytics, no accounts.
+• Data is stored only on your computer (chrome.storage.local).
+• Runs on a tab only after you start a mode. No host permissions.
+
+★ COMMENT MODE
+• Hover to highlight, click to capture.
+• The element is outlined on the screenshot, and its selector, tag, classes, text and position are saved.
+
+★ SCREENSHOT MODE
+• Drag to capture a rectangle.
+• Alt + drag to draw a freeform shape.
+• Ctrl + click to capture the full visible page.
+
+★ AND MORE
+• Comment list with thumbnails, individual delete and clear all.
+• One-file HTML report with embedded images, dark mode and print-friendly styles.
+• Keyboard friendly: Esc to exit, Ctrl/Cmd + Enter to save.
+• Light and dark themes.
+
+★ HOW IT WORKS
+1. Open the site you're testing and click the Just Comment icon.
+2. Choose "Start comment mode" or "Start screenshot mode".
+3. Click an element or select an area, type your note, save.
+4. Download the report from the popup.
+
+Perfect for QA engineers, designers, product managers and developers reviewing staging or production sites.
+
+---
+Short description (132 chars max, same as manifest.json "description"):
+Capture screenshots and add comments on any UI element during web testing. Fully local — no data ever leaves your device.
+
+Category: Developer Tools
+Language: English
+
+Single purpose: Capture screenshots and comments on web pages during manual testing and export them as a local HTML report.
+
+Permission justifications:
+- activeTab: capture a screenshot of the tab the user invoked the extension on.
+- scripting: inject the comment/screenshot mode UI into that tab when the user starts a mode.
+- storage: keep the user's comments locally.
+- downloads: save the HTML report the user requests.
+
+Remote code: No. Data collection: None.

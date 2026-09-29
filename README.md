@@ -1,90 +1,154 @@
-# Yorum Toplayıcı — Yerel Web Test Notları
+# Just Comment
 
-Canlı bir web sitesinde test yaparken tıkladığın komponentin **ekran görüntüsünü**,
-**yorumunu** ve **element bilgisini** otomatik toplayan Chrome eklentisi (Manifest V3).
+Point, click, comment. A Chrome extension (Manifest V3) for manual web testing. Click any
+element on a live site to capture an **annotated screenshot**, your **comment**, and the
+element's **CSS selector**, or snip any area of the page, then export everything as a
+single offline HTML report.
 
-**Hiçbir veri dışarı gönderilmez.** Eklentide tek bir `fetch`/`XHR` çağrısı yoktur,
-harici kütüphane veya CDN kullanılmaz, `host_permissions` tanımlı değildir. Her şey
-`chrome.storage.local` içinde, yalnızca bu bilgisayarda durur (`chrome.storage.sync`
-bilinçli olarak **kullanılmamıştır** — o Google hesabına senkronize olurdu).
+**100% local.** No network requests, no analytics, no external libraries, no
+`host_permissions`. Everything stays in `chrome.storage.local` on your machine.
 
-## Kurulum (Load unpacked)
+Light and dark themes follow your system setting.
 
-1. Chrome'da adres çubuğuna `chrome://extensions` yaz ve Enter'a bas.
-2. Sağ üstteki **Geliştirici modu** (Developer mode) anahtarını aç.
-3. Sol üstte çıkan **Paketlenmemiş öğe yükle** (Load unpacked) düğmesine tıkla.
-4. Bu klasörü (`manifest.json` dosyasının bulunduğu klasörü) seç.
-5. Eklenti listede belirir. Araç çubuğunda görünmesi için puzzle (🧩) ikonuna tıklayıp
-   "Yorum Toplayıcı"yı sabitle (pin).
+## Features
 
-Kodda değişiklik yaptığında `chrome://extensions` sayfasındaki yenile (⟳) ikonuna basman
-ve test ettiğin sekmeyi yenilemen yeterli.
+- **Comment mode**: hover to highlight, click to capture. The clicked element is outlined
+  on the screenshot, and its selector, tag, classes, text and position are recorded.
+- **Screenshot mode**: snipping-tool style selection drawn over the live page:
+  | Method | How | Result |
+  |---|---|---|
+  | Rectangle (default) | Click + drag | Cropped to the rectangle |
+  | Freeform | Alt + drag | Cropped to the shape's bounds, outside of the shape dimmed |
+  | Full page | Ctrl + click (Cmd + click on macOS) | The whole visible viewport |
+- The two modes are mutually exclusive: starting one stops the other.
+- **Comment list** in the popup with thumbnails, per-item delete and "Clear All", both
+  with inline confirmation.
+- **HTML report**: one self-contained file with embedded images, dark mode and print styles.
+- **Keyboard friendly**: `Esc` cancels a selection, closes the dialog or exits the mode;
+  `Ctrl/Cmd + Enter` saves; focus is trapped inside the dialog.
 
-## Kullanım
+## Installation
 
-1. Test etmek istediğin siteyi aç (http/https olmalı).
-2. Araç çubuğundaki eklenti ikonuna tıkla → **"Yorum modunu aç"**.
-   > Manifest V3'te ikon bir popup açtığı için aç/kapat düğmesi popup'ın içindedir;
-   > aynı düğme modu kapatmak için de kullanılır. Sayfada **Esc** de modu kapatır.
-3. Popup'ı kapat. Artık fare ile gezdiğin her element **kırmızı çerçeveyle** vurgulanır
-   ve tıklamalar sayfanın kendi davranışını tetiklemez.
-4. Bir komponente tıkla → ekran görüntüsü alınır, tıklanan eleman görüntü üzerinde
-   kırmızı kutuyla işaretlenir ve yorum kutusu açılır.
-5. Yorumunu yazıp **Kaydet**'e bas. Kayıt şunları içerir:
-   `{ tarih-saat, sayfa URL'si, CSS selector, element bilgisi, ekran görüntüsü (base64), yorum }`
-6. Popup'tan **Raporu İndir** ile tek parça, offline açılabilen bir HTML dosyası al;
-   **Tümünü Temizle** ile depoyu sıfırla.
+### From the Chrome Web Store
 
-## Dosyalar
+_Coming soon._
 
-| Dosya | Görevi |
+### Load unpacked (development)
+
+1. Open `chrome://extensions`.
+2. Turn on **Developer mode** (top right).
+3. Click **Load unpacked** and select this folder (the one containing `manifest.json`).
+4. Pin **Just Comment** from the puzzle-piece menu so it's always in the toolbar.
+
+After changing the code, click the reload icon on `chrome://extensions` and reload the
+tab you are testing.
+
+## Usage
+
+1. Open the site you want to test (must be `http` or `https`).
+2. Click the toolbar icon and choose **Start comment mode** or **Start screenshot mode**.
+3. Close the popup, then click an element (comment mode) or select an area (screenshot mode).
+   The screenshot is taken and the comment dialog opens.
+4. Type your comment and press **Save** (or `Ctrl/Cmd + Enter`).
+5. Back in the popup, **Download Report** to get the HTML file, or delete comments.
+
+Clicking the active mode's button again (or pressing `Esc` on the page) turns it off.
+
+Each saved record looks like:
+
+```json
+{
+  "id": "1759150000000-abc123",
+  "createdAt": "2026-09-29T12:00:00.000Z",
+  "mode": "comment",
+  "pageUrl": "https://example.com/",
+  "pageTitle": "Example",
+  "element": { "selector": "...", "tagName": "button", "id": null, "classes": [], "text": "...", "rect": {} },
+  "selection": null,
+  "screenshot": "data:image/jpeg;base64,...",
+  "comment": "..."
+}
+```
+
+In screenshot mode, `mode` is `"screenshot"`, `element` is `null`, and `selection` is
+`{ "type": "rect" | "freeform" | "full", "rect": { "x", "y", "width", "height" } }`
+in CSS pixels relative to the viewport.
+
+## Architecture
+
+| File | Role |
 |---|---|
-| `manifest.json` | MV3 tanımı, asgari izinler (`activeTab`, `scripting`, `storage`, `downloads`) |
-| `background.js` | Service worker: content script enjeksiyonu, ekran görüntüsü, kayıt |
-| `content.js` | Hover highlight, tıklama yakalama, selector üretimi, işaretleme, yorum kutusu |
-| `content.css` | Shadow DOM host'unun sayfadan izole edilmesi |
-| `popup.html/js/css` | Yorum listesi, HTML rapor üretimi, temizleme |
+| `manifest.json` | MV3 manifest, minimal permissions (`activeTab`, `scripting`, `storage`, `downloads`) |
+| `constants.js` | Shared constants, message types and helpers (`globalThis.JC`) |
+| `background.js` | Service worker: content-script injection, mode toggling, screenshot capture, saving |
+| `content.js` | Shadow-DOM UI, hover highlight, selection overlay, selector generation, crop/annotation, comment dialog |
+| `content.css` | Isolates the shadow host from the page |
+| `popup.html/js/css` | Mode toggles, comment list, report generation, deletion |
+| `icons/` | Toolbar and store icons (the Offset mark) |
+| `fonts/` | Bundled IBM Plex Sans / Mono (Latin subset, `.woff2`) and their OFL license |
+| `store-assets/` | Chrome Web Store listing text and asset checklist |
 
-Content script manifest'te `content_scripts` ile **her siteye otomatik enjekte edilmez**;
-yalnızca sen yorum modunu açtığında `chrome.scripting.executeScript` ile o sekmeye
-enjekte edilir. Bu yüzden `host_permissions` gerekmez.
+### Design system
 
-## Ekran görüntüsü: neden `captureVisibleTab`, neden html2canvas değil
+The UI follows the Just Comment design system: Signal Orange accent, Inspector Cyan for
+selection, a warm Ink 900 neutral, and IBM Plex Sans / Mono.
 
-`chrome.tabs.captureVisibleTab` kullanıldı. Gerekçe:
+- **In-page overlay** (`content.js`): always light and opaque with an ink border, so it holds up
+  on any host page. The only transparency is the 12% cyan inspector fill. The hover highlight,
+  committed-anchor outline, mode indicator (the expanded FAB pill) and comment popover match
+  the spec's core components.
+- **Popup and report**: the neutral ramp with borders instead of shadows, one primary action
+  per view, and a dark theme (Ink panel, inverted logo) that follows the system setting.
+- **Fonts** ship inside the extension and never load from a CDN. The content script registers
+  them via the `FontFace` API under private family names (`JC Plex Sans`/`JC Plex Mono`) so they
+  can't clash with the page's fonts. This is why `fonts/*.woff2` is listed in
+  `web_accessible_resources`. The downloaded HTML report uses IBM Plex only if it's installed
+  on the viewer's machine and falls back to system fonts otherwise.
 
-- **Doğruluk:** Tarayıcının kendi compositor çıktısıdır — sayfada ne görüyorsan o çıkar.
-  html2canvas sayfayı CSS'ten yeniden çizmeye çalışır; `<canvas>`, `<iframe>`, gölge DOM,
-  web font, CSS filter/mask, `background-clip` gibi yapılarda düzenli olarak bozulur.
-- **CSP:** html2canvas ara adımda SVG `foreignObject` → data URL → `<img>` yolu kullanır.
-  Katı `img-src`/`style-src` politikası olan sitelerde bu adım engellenir.
-  `captureVisibleTab` sayfa CSP'sinden tamamen bağımsızdır.
-- **Bağımlılık yok:** ~250 KB'lık bir kütüphaneyi paketlemeye gerek kalmaz; ağ isteği
-  yapmama garantisi kod okunarak doğrulanabilir kalır.
+The content script is **not** declared in `content_scripts`. It is injected with
+`chrome.scripting.executeScript` only into the tab where you start a mode. That's why no
+`host_permissions` are required.
 
-Görüntü üzerindeki kırmızı işaret kutusu, yakalanan görüntü yerel bir `<canvas>`
-üzerine çizildikten sonra `strokeRect` ile ekleniyor (`content.js` → `annotate`).
+### Why `captureVisibleTab` instead of html2canvas
 
-## Bilinen kısıtlar
+- **Accuracy**: it's the browser's own compositor output. html2canvas re-renders from CSS
+  and regularly breaks on `<canvas>`, iframes, shadow DOM, web fonts, filters and masks.
+- **CSP**: html2canvas relies on SVG `foreignObject` → data URL → `<img>`, which strict
+  `img-src`/`style-src` policies block. `captureVisibleTab` ignores page CSP.
+- **No dependencies**: nothing to bundle, and the "no network requests" guarantee stays
+  verifiable by reading the code.
 
-- **Yalnızca görünür alan.** `captureVisibleTab` viewport'u yakalar; sayfanın tamamını
-  değil. Kutu ekranın dışında kalıyorsa önce o noktaya kaydır.
-- **Yasaklı sayfalar.** `chrome://`, `chrome-extension://`, Chrome Web Store ve
-  `view-source:` sayfalarına hiçbir eklenti enjekte edilemez. Popup bu durumda uyarır.
-- **`file://` sayfaları.** Çalışması için `chrome://extensions` → eklenti detayı →
-  "Dosya URL'lerine erişime izin ver" seçeneğini açman gerekir.
-- **`activeTab` ömrü.** İzin, ikona tıkladığında verilir ve sekme başka bir adrese
-  gidene kadar sürer. Sayfayı yenilersen yorum modunu tekrar açman gerekir.
-- **Cross-origin iframe içeriği.** Yorum modu üst dokümanda çalışır; farklı kaynaklı
-  bir iframe'in içindeki elemanlar için selector üretilemez (iframe'in kendisi seçilir).
-  Ekran görüntüsünde iframe içeriği yine de görünür.
-- **Depolama kotası.** `chrome.storage.local` `unlimitedStorage` olmadan ~10 MB'dır.
-  Görüntüler bu yüzden JPEG (kalite ~0.8) olarak ve en fazla 1400 px genişlikte
-  saklanıyor; kaba hesapla birkaç yüz yorum sığar. Kota dolduğunda yorum kutusu hata
-  gösterir — raporu indirip listeyi temizle.
-- **Selector kırılganlığı.** Üretilen selector `id > tag+class > nth-child` sırasıyla,
-  yakalandığı andaki DOM'a göre benzersiz olacak şekilde seçilir. Hash'li/üretilmiş
-  class adları (CSS Modules, Tailwind JIT, styled-components) kullanan sitelerde bu
-  selector bir sonraki derlemede geçersiz olabilir.
-- **Sayfanın kendi kısayolları.** Fare olayları capture fazında yutulur, ancak sayfa
-  `keydown` dinleyicileriyle hâlâ tepki verebilir; yorum modundayken klavye kullanma.
+The element outline (`annotate`) and the crop/freeform mask (`cropScreenshot`) are drawn
+on a local `<canvas>` in `content.js`.
+
+## Privacy
+
+See [PRIVACY.md](PRIVACY.md). In short: no data leaves your computer.
+
+## Known limitations
+
+- **Visible area only**: scroll the element or area into view before capturing.
+- **Restricted pages**: `chrome://`, `chrome-extension://`, the Chrome Web Store and
+  `view-source:` pages can't be scripted by any extension. The popup tells you when this happens.
+- **`file://` pages** are not supported.
+- **`activeTab` lifetime**: access lasts until the tab navigates. After a reload, start the
+  mode again.
+- **Cross-origin iframes**: the selector points at the iframe itself, not elements inside
+  it (they still appear in the screenshot).
+- **Freeform masking**: screenshots are stored as JPEG, which has no transparency, so the
+  area outside a freeform shape is dimmed rather than removed.
+- **Alt key on Windows**: releasing Alt can occasionally focus Chrome's menu after a
+  freeform drag. Press `Esc` or click the page to return.
+- **Storage quota**: `chrome.storage.local` is ~10 MB. Screenshots are stored as JPEG
+  (max 1400 px wide), which fits a few hundred comments. When it's full the dialog shows
+  an error: download the report and clear the list.
+- **Selector fragility**: selectors are unique at capture time (`id > tag+class >
+  nth-child`). Sites with hashed class names (CSS Modules, Tailwind JIT, styled-components)
+  may produce selectors that break on the next build.
+- **Page keyboard shortcuts**: pointer events are swallowed, but the page may still react
+  to keys pressed outside the dialog.
+
+## License
+
+MIT. IBM Plex fonts in `fonts/` are © IBM Corp. and licensed under the SIL Open Font
+License 1.1 (`fonts/OFL.txt`).

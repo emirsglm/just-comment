@@ -1,0 +1,7 @@
+{
+  "name": "just-comment",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Capture screenshots and comments on UI elements while manually testing web apps. 100% local.",
+  "license": "MIT"
+}

@@ -1,14 +1,32 @@
 {
   "manifest_version": 3,
-  "name": "Yorum Toplayıcı (Yerel Test Notları)",
+  "name": "Just Comment",
   "version": "1.0.0",
-  "description": "Canlı sitelerde tıkladığın komponentin ekran görüntüsünü ve yorumunu tamamen yerel olarak toplar. Hiçbir ağ isteği yapmaz.",
+  "description": "Capture screenshots and add comments on any UI element during web testing. Fully local — no data ever leaves your device.",
   "permissions": ["activeTab", "scripting", "storage", "downloads"],
   "background": {
     "service_worker": "background.js"
   },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["fonts/*.woff2"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Yorum Toplayıcı"
+    "default_title": "Just Comment",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
   }
 }

@@ -1,7 +1,7 @@
-/* Sayfaya enjekte edilen tek element: shadow root'u barındıran host.
-   Asıl stiller shadow DOM içinde tanımlıdır; böylece sayfanın kendi CSS'i
-   bizim arayüzümüzü, biz de sayfanın görünümünü bozmayız. */
-#__yorum_toplayici_host__ {
+/* The only element injected into the page: the host of our shadow root.
+   All real styles live inside the shadow DOM, so the page's CSS can't break
+   our UI and we don't affect the page's appearance. */
+#__just_comment_host__ {
   all: initial;
   position: fixed;
   top: 0;

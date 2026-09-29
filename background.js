@@ -1,47 +1,59 @@
 // Service worker (MV3).
-// Görevleri:
-//  1) Aktif sekmeye content script'i enjekte edip yorum modunu aç/kapat.
-//  2) Content script'ten gelen istek üzerine görünür alanın ekran görüntüsünü almak.
-// Burada hiçbir fetch/XHR yoktur ve hiçbir veri dışarı gönderilmez.
+// Responsibilities:
+//  1) Inject the content script into the active tab and toggle comment /
+//     screenshot mode.
+//  2) Capture the visible area of the tab on request from the content script.
+//  3) Append saved comments to chrome.storage.local.
+// There is no fetch/XHR here and no data ever leaves the machine.
 
-const STORAGE_KEY = "comments";
+importScripts("constants.js");
 
-// Content script'in o sekmeye enjekte edilip edilmediğini takip eder.
-// Service worker uykuya dalarsa bu set sıfırlanır; bu yüzden aşağıda
-// önce ping atıp gerçekten yaşıyor mu diye kontrol ediyoruz.
+/**
+ * Makes sure the content script is alive in the tab, injecting it if needed.
+ * The worker may have been restarted, so we ping first instead of keeping
+ * an in-memory set of injected tabs.
+ * @param {number} tabId
+ * @returns {Promise<boolean>}
+ */
 async function ensureContentScript(tabId) {
   try {
-    const pong = await chrome.tabs.sendMessage(tabId, { type: "PING" });
+    const pong = await chrome.tabs.sendMessage(tabId, { type: JC.MSG.PING });
     if (pong && pong.ok) return true;
   } catch (e) {
-    // Henüz enjekte edilmemiş; aşağıda enjekte edeceğiz.
+    // Not injected yet; inject below.
   }
 
   await chrome.scripting.insertCSS({ target: { tabId }, files: ["content.css"] });
-  await chrome.scripting.executeScript({ target: { tabId }, files: ["content.js"] });
+  await chrome.scripting.executeScript({ target: { tabId }, files: ["constants.js", "content.js"] });
   return true;
 }
 
-// Popup'tan gelen "yorum modunu aç/kapat" isteği.
-async function toggleCommentMode(tabId) {
-  await ensureContentScript(tabId);
-  const res = await chrome.tabs.sendMessage(tabId, { type: "TOGGLE_COMMENT_MODE" });
-  return res; // { active: true|false }
+/**
+ * Forwards a toggle message to the active tab's content script.
+ * @param {string} contentMessageType  JC.MSG.TOGGLE_COMMENT_MODE or JC.MSG.TOGGLE_SCREENSHOT_MODE
+ * @returns {Promise<{mode: string|null}>}
+ */
+async function toggleModeInActiveTab(contentMessageType) {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab || !tab.id) throw new Error("No active tab found.");
+  if (!/^https?:/i.test(tab.url || "")) {
+    throw new Error("Cannot work on this page (chrome://, Web Store and file pages are excluded).");
+  }
+  await ensureContentScript(tab.id);
+  return chrome.tabs.sendMessage(tab.id, { type: contentMessageType });
 }
 
-// Görünür alanın ekran görüntüsü. Content script'ten çağrılır.
-// JPEG + kalite 80 kullanıyoruz; PNG base64 chrome.storage.local kotasını
-// (10 MB) çok hızlı doldurur.
+// Visible-area screenshot, requested by the content script.
+// JPEG at quality 80: PNG base64 fills the chrome.storage.local quota (10 MB) quickly.
 async function captureVisibleTab(windowId) {
   return chrome.tabs.captureVisibleTab(windowId, { format: "jpeg", quality: 80 });
 }
 
 async function addComment(record) {
-  const data = await chrome.storage.local.get(STORAGE_KEY);
-  const list = Array.isArray(data[STORAGE_KEY]) ? data[STORAGE_KEY] : [];
+  const data = await chrome.storage.local.get(JC.STORAGE_KEY);
+  const list = Array.isArray(data[JC.STORAGE_KEY]) ? data[JC.STORAGE_KEY] : [];
   list.push(record);
-  // Üzerine yazmadan listeye ekleniyor.
-  await chrome.storage.local.set({ [STORAGE_KEY]: list });
+  await chrome.storage.local.set({ [JC.STORAGE_KEY]: list });
   return list.length;
 }
 
@@ -49,40 +61,39 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   (async () => {
     try {
       switch (msg.type) {
-        case "TOGGLE_FROM_POPUP": {
-          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-          if (!tab || !tab.id) throw new Error("Aktif sekme bulunamadı.");
-          if (!/^https?:/i.test(tab.url || "")) {
-            throw new Error(
-              "Bu sayfada çalışamaz (chrome://, Web Store ve dosya sayfaları hariç tutulur)."
-            );
-          }
-          const res = await toggleCommentMode(tab.id);
+        case JC.MSG.TOGGLE_FROM_POPUP: {
+          const res = await toggleModeInActiveTab(JC.MSG.TOGGLE_COMMENT_MODE);
           sendResponse({ ok: true, ...res });
           break;
         }
 
-        case "CAPTURE_VISIBLE_TAB": {
-          // sender.tab.windowId — capture her zaman isteği yapan sekmenin penceresinden.
+        case JC.MSG.TOGGLE_SCREENSHOT_MODE: {
+          const res = await toggleModeInActiveTab(JC.MSG.TOGGLE_SCREENSHOT_MODE);
+          sendResponse({ ok: true, ...res });
+          break;
+        }
+
+        case JC.MSG.CAPTURE_VISIBLE_TAB: {
+          // Always capture the window of the tab that asked.
           const dataUrl = await captureVisibleTab(sender.tab.windowId);
           sendResponse({ ok: true, dataUrl });
           break;
         }
 
-        case "SAVE_COMMENT": {
+        case JC.MSG.SAVE_COMMENT: {
           const count = await addComment(msg.record);
           sendResponse({ ok: true, count });
           break;
         }
 
         default:
-          sendResponse({ ok: false, error: "Bilinmeyen mesaj tipi: " + msg.type });
+          sendResponse({ ok: false, error: "Unknown message type: " + msg.type });
       }
     } catch (err) {
-      sendResponse({ ok: false, error: String(err && err.message ? err.message : err) });
+      sendResponse({ ok: false, error: JC.getErrorMessage(err) });
     }
   })();
 
-  // Asenkron yanıt vereceğimizi Chrome'a bildirir.
+  // Tells Chrome we will respond asynchronously.
   return true;
 });

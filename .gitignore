@@ -1,0 +1,5 @@
+node_modules/
+store-assets/*.png
+*.zip
+*.crx
+*.pem

@@ -1,31 +1,83 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en" class="jc-root">
 <head>
   <meta charset="utf-8">
+  <title>Just Comment</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <header>
-    <h1>Yorum Toplayıcı</h1>
-    <p class="hint">Tüm veriler yalnızca bu bilgisayarda tutulur.</p>
+  <header class="header">
+    <!-- Two lockups only: ink mark on light, inverted mark on ink. -->
+    <svg class="logo logo-light" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <rect width="48" height="48" rx="10" fill="#16110D"/>
+      <rect x="8.5" y="8.5" width="23" height="23" rx="7.5" stroke="#FF5C1A" stroke-width="4"/>
+      <rect x="18" y="18" width="24" height="24" rx="9" fill="#16110D"/>
+      <rect x="21" y="21" width="19" height="19" rx="6.5" fill="#FF5C1A"/>
+    </svg>
+    <svg class="logo logo-dark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <rect width="48" height="48" rx="10" fill="#FF5C1A"/>
+      <rect x="8.5" y="8.5" width="23" height="23" rx="7.5" stroke="#16110D" stroke-width="4"/>
+      <rect x="18" y="18" width="24" height="24" rx="9" fill="#FF5C1A"/>
+      <rect x="21" y="21" width="19" height="19" rx="6.5" fill="#16110D"/>
+    </svg>
+    <div class="header-text">
+      <h1 class="wordmark">Just Comment</h1>
+      <p class="hint">All data stays on this computer only.</p>
+    </div>
   </header>
 
-  <div class="actions">
-    <button id="toggle" class="primary" type="button">Yorum modunu aç</button>
+  <div class="modes">
+    <button id="toggle" class="mode" type="button" aria-pressed="false">
+      <span class="mode-disc">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7.5A3.5 3.5 0 0 1 7.5 4h9A3.5 3.5 0 0 1 20 7.5v6a3.5 3.5 0 0 1-3.5 3.5h-4l-4.5 3.5V17H7.5A3.5 3.5 0 0 1 4 13.5v-6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="mode-text">
+        <span class="mode-label">Start comment mode</span>
+        <span class="mode-hint">Click an element to capture it with its selector</span>
+      </span>
+      <span class="mode-state" aria-hidden="true">On</span>
+    </button>
+    <button id="screenshot-toggle" class="mode" type="button" aria-pressed="false">
+      <span class="mode-disc">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect x="8" y="8" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </span>
+      <span class="mode-text">
+        <span class="mode-label">Start screenshot mode</span>
+        <span class="mode-hint">Drag an area · <kbd>Alt</kbd> freeform · <kbd>Ctrl</kbd>+click full page</span>
+      </span>
+      <span class="mode-state" aria-hidden="true">On</span>
+    </button>
   </div>
 
-  <div id="status" class="status"></div>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
 
-  <div class="bar">
-    <span id="count">0 yorum</span>
-    <span class="bar-buttons">
-      <button id="download" type="button">Raporu İndir</button>
-      <button id="clear" class="danger" type="button">Tümünü Temizle</button>
-    </span>
-  </div>
+  <section class="comments" aria-labelledby="count">
+    <div class="bar">
+      <div id="bar-default" class="bar-row">
+        <span id="count" class="overline">0 comments</span>
+        <span class="bar-buttons">
+          <button id="clear" class="btn btn-quiet" type="button">Clear All</button>
+          <button id="download" class="btn btn-primary" type="button">Download Report</button>
+        </span>
+      </div>
+      <div id="bar-confirm" class="bar-row confirm" hidden>
+        <span id="clear-question" class="confirm-text"></span>
+        <span class="bar-buttons">
+          <button id="clear-cancel" class="btn btn-secondary" type="button">Cancel</button>
+          <button id="clear-yes" class="btn btn-destructive" type="button">Delete all</button>
+        </span>
+      </div>
+    </div>
 
-  <ul id="list" class="list"></ul>
+    <ul id="list" class="list"></ul>
+  </section>
 
+  <script src="constants.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

@@ -62,7 +62,7 @@
     screenshot:
       '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="8" y="8" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>',
     mark:
-      '<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect width="48" height="48" rx="10" fill="#16110D"/><rect x="8.5" y="8.5" width="23" height="23" rx="7.5" stroke="#FF5C1A" stroke-width="4"/><rect x="18" y="18" width="24" height="24" rx="9" fill="#16110D"/><rect x="21" y="21" width="19" height="19" rx="6.5" fill="#FF5C1A"/></svg>'
+      '<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#16110D"/><rect x="9" y="9" width="22" height="22" rx="7" stroke="#FF5C1A" stroke-width="3"/><rect x="18.5" y="18.5" width="23" height="23" rx="8.5" fill="#16110D"/><rect x="21" y="21" width="18" height="18" rx="6" fill="#FF5C1A"/></svg>'
   };
 
   // ---------------------------------------------------------------------------
@@ -78,12 +78,71 @@
       /* Inherits nothing from the host page. Sizes are in px because rem
          would resolve against the host page's root font size. */
       .jc-root {
+        --panel: #FFFFFF;
+        --panel-alt: #F6F7F9;
+        --divider: #EDEFF3;
+        --border: #DDE1E8;
+        --text: #16110D;
+        --text-body: #252B36;
+        --text-muted: #6B7280;
+        --text-code: #414A5A;
+        --focus-ring-color: #FFD2BB;
+        --kbd-bg: #FFFFFF;
+        --kbd-text: #414A5A;
+        --kbd-border: #DDE1E8;
+        --error-bg: #FFFFFF;
+        --error-border: #E5484D;
+        --error-text: #C62A2F;
+        --pill-bg: #FFF1EA;
+        --pill-border: #FFD2BB;
+        --pill-text: #B83A08;
+        --selector-bg: #E6F8FB;
+        --selector-border: #BEEAF1;
+        --selector-text: #0E7C90;
+        --btn-primary-bg: #B83A08;
+        --btn-primary-hover: #8F2C05;
+        --btn-secondary-bg: #FFFFFF;
+        --btn-secondary-text: #414A5A;
+        --btn-secondary-border: #DDE1E8;
+        --btn-secondary-hover-bg: #F6F7F9;
+
         font-size: 16px;
         font-family: ${FONT_SANS};
         font-weight: 400;
         line-height: 1.55;
-        color: #252B36;
+        color: var(--text-body);
         -webkit-font-smoothing: antialiased;
+      }
+      @media (prefers-color-scheme: dark) {
+        .jc-root {
+          --panel: #16110D;
+          --panel-alt: #252B36;
+          --divider: #2E3440;
+          --border: #414A5A;
+          --text: #EDEFF3;
+          --text-body: #EDEFF3;
+          --text-muted: #DDE1E8;
+          --text-code: #DDE1E8;
+          --focus-ring-color: #FFD2BB;
+          --kbd-bg: #FFFFFF;
+          --kbd-text: #414A5A;
+          --kbd-border: #414A5A;
+          --error-bg: #16110D;
+          --error-border: #E5484D;
+          --error-text: #E5484D;
+          --pill-bg: #252B36;
+          --pill-border: #414A5A;
+          --pill-text: #FF5C1A;
+          --selector-bg: #252B36;
+          --selector-border: #414A5A;
+          --selector-text: #22C5DE;
+          --btn-primary-bg: #B83A08;
+          --btn-primary-hover: #8F2C05;
+          --btn-secondary-bg: #252B36;
+          --btn-secondary-text: #EDEFF3;
+          --btn-secondary-border: #414A5A;
+          --btn-secondary-hover-bg: #16110D;
+        }
       }
       .jc-root *, .jc-root *::before, .jc-root *::after { box-sizing: border-box; }
 
@@ -200,8 +259,8 @@
         flex-direction: column;
         z-index: 4;
         overflow: hidden;
-        background: #FFFFFF;
-        border: 1px solid #16110D;
+        background: var(--panel);
+        border: 1px solid var(--text);
         border-radius: 10px;
         box-shadow: 0 12px 32px rgba(22, 17, 13, .24);
         font-size: 13px;
@@ -213,15 +272,15 @@
         align-items: center;
         gap: 8px;
         padding: 10px 12px;
-        border-bottom: 1px solid #EDEFF3;
+        border-bottom: 1px solid var(--divider);
       }
       .pop-mark { flex: none; width: 22px; height: 22px; }
       .pop-mark svg { display: block; width: 22px; height: 22px; }
       .pop-titles { min-width: 0; flex: 1; }
-      .pop-title { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.3; color: #16110D; }
+      .pop-title { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--text); }
       .pop-meta {
         font: 500 11px/1.4 ${FONT_MONO};
-        color: #6B7280;
+        color: var(--text-muted);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -231,9 +290,9 @@
         font-size: 11px;
         font-weight: 500;
         line-height: 1.4;
-        color: #B83A08;
-        background: #FFF1EA;
-        border: 1px solid #FFD2BB;
+        color: var(--pill-text);
+        background: var(--pill-bg);
+        border: 1px solid var(--pill-border);
         border-radius: 999px;
         padding: 3px 8px;
       }
@@ -244,7 +303,7 @@
         max-width: 100%;
         max-height: 40vh;
         margin: 0 auto 10px;
-        border: 1px solid #DDE1E8;
+        border: 1px solid var(--border);
         border-radius: 8px;
       }
       .selector {
@@ -252,9 +311,9 @@
         max-width: 100%;
         margin-bottom: 9px;
         font: 400 11px/1.45 ${FONT_MONO};
-        color: #0E7C90;
-        background: #E6F8FB;
-        border: 1px solid #BEEAF1;
+        color: var(--selector-text);
+        background: var(--selector-bg);
+        border: 1px solid var(--selector-border);
         border-radius: 5px;
         padding: 3px 7px;
       }
@@ -266,8 +325,8 @@
         margin: 0 0 10px;
         font: 400 11px/1.45 ${FONT_MONO};
       }
-      .meta dt { color: #6B7280; }
-      .meta dd { margin: 0; color: #414A5A; word-break: break-all; }
+      .meta dt { color: var(--text-muted); }
+      .meta dd { margin: 0; color: var(--text-code); word-break: break-all; }
 
       .sr-only {
         position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -281,15 +340,15 @@
         margin: 0;
         padding: 8px 10px;
         font: 400 13px/1.55 ${FONT_SANS};
-        color: #252B36;
-        background: #FFFFFF;
-        border: 1px solid #DDE1E8;
+        color: var(--text-body);
+        background: var(--panel);
+        border: 1px solid var(--border);
         border-radius: 8px;
         outline: none;
         transition: border-color .12s ease-out;
       }
-      textarea::placeholder { color: #6B7280; }
-      textarea:focus { border-color: #FF5C1A; box-shadow: 0 0 0 3px #FFD2BB; }
+      textarea::placeholder { color: var(--text-muted); }
+      textarea:focus { border-color: #FF5C1A; box-shadow: 0 0 0 3px var(--focus-ring-color); }
 
       .error {
         display: none;
@@ -299,9 +358,9 @@
         padding: 7px 10px;
         font-size: 12px;
         line-height: 1.4;
-        color: #C62A2F;
-        background: #FFFFFF;
-        border: 1px solid #E5484D;
+        color: var(--error-text);
+        background: var(--error-bg);
+        border: 1px solid var(--error-border);
         border-radius: 6px;
       }
       .error.show { display: flex; }
@@ -311,7 +370,7 @@
         width: 16px;
         height: 16px;
         border-radius: 999px;
-        background: #E5484D;
+        background: var(--error-border);
         color: #FFFFFF;
         font-weight: 600;
         font-size: 11px;
@@ -324,12 +383,12 @@
         align-items: center;
         gap: 8px;
         padding: 10px 12px;
-        background: #F6F7F9;
-        border-top: 1px solid #EDEFF3;
+        background: var(--panel-alt);
+        border-top: 1px solid var(--divider);
       }
       .pop-foot .spacer { flex: 1; }
       .pop-foot .keys { display: flex; gap: 4px; align-items: center; }
-      .pop-foot .keys kbd { background: #FFFFFF; color: #414A5A; border: 1px solid #DDE1E8; }
+      .pop-foot .keys kbd { background: var(--kbd-bg); color: var(--kbd-text); border: 1px solid var(--kbd-border); }
 
       button.btn {
         font: 500 12px/1.4 ${FONT_SANS};
@@ -338,12 +397,12 @@
         cursor: pointer;
         transition: background .12s ease-out, border-color .12s ease-out, color .12s ease-out;
       }
-      button.btn:focus-visible { outline: 3px solid #FFD2BB; outline-offset: 2px; }
+      button.btn:focus-visible { outline: 3px solid var(--focus-ring-color); outline-offset: 2px; }
       button.btn:disabled { opacity: .6; cursor: default; }
-      .btn-primary { color: #FFFFFF; background: #B83A08; border: 1px solid #B83A08; }
-      .btn-primary:hover:not(:disabled) { background: #8F2C05; border-color: #8F2C05; }
-      .btn-secondary { color: #414A5A; background: #FFFFFF; border: 1px solid #DDE1E8; }
-      .btn-secondary:hover:not(:disabled) { background: #F6F7F9; border-color: #6B7280; }
+      .btn-primary { color: #FFFFFF; background: var(--btn-primary-bg); border: 1px solid var(--btn-primary-bg); }
+      .btn-primary:hover:not(:disabled) { background: var(--btn-primary-hover); border-color: var(--btn-primary-hover); }
+      .btn-secondary { color: var(--btn-secondary-text); background: var(--btn-secondary-bg); border: 1px solid var(--btn-secondary-border); }
+      .btn-secondary:hover:not(:disabled) { background: var(--btn-secondary-hover-bg); border-color: var(--text-muted); }
 
       @keyframes jc-open {
         from { opacity: 0; transform: translate(-50%, calc(-50% + 4px)); }
@@ -765,21 +824,17 @@
     return e.target === host;
   }
 
-  // Swallow pointer events in the capture phase so the page's own behavior
-  // isn't triggered.
-  function swallow(e) {
-    if (!mode || dialogOpen || isOwnUi(e)) return;
-    swallowEvent(e);
-  }
-
-  function onMouseDown(e) {
+  // Screenshot selection uses pointer events directly. Calling preventDefault
+  // on pointerdown can suppress mousedown/mouseup/click in Chrome, so we
+  // handle drag selection here instead of relying on mouse events.
+  function onPointerDown(e) {
     if (!mode || dialogOpen || isOwnUi(e)) return;
     swallowEvent(e);
     if (busy || mode !== MODE.SCREENSHOT || e.button !== 0) return;
     beginSelection(e);
   }
 
-  function onMouseMove(e) {
+  function onPointerMove(e) {
     if (!mode || dialogOpen || busy) return;
 
     if (mode === MODE.SCREENSHOT) {
@@ -798,7 +853,7 @@
     showHoverHighlight(el);
   }
 
-  function onMouseUp(e) {
+  function onPointerUp(e) {
     if (!mode || dialogOpen) return;
     if (isOwnUi(e) && !isDrawing) return;
     swallowEvent(e);
@@ -826,7 +881,6 @@
       }
       swallowEvent(e);
     } else if (e.key === "Alt" && mode === MODE.SCREENSHOT && !dialogOpen) {
-      // Best effort: keep Alt from focusing the browser menu during freeform drags.
       e.preventDefault();
     }
   }
@@ -835,7 +889,13 @@
     if (e.key === "Alt" && mode === MODE.SCREENSHOT && !dialogOpen) e.preventDefault();
   }
 
-  const SWALLOWED = ["pointerdown", "pointerup", "dblclick", "contextmenu", "auxclick", "dragstart"];
+  // Swallow extra event types so the page's own handlers don't fire.
+  function swallow(e) {
+    if (!mode || dialogOpen || isOwnUi(e)) return;
+    swallowEvent(e);
+  }
+
+  const SWALLOWED = ["mousedown", "mouseup", "dblclick", "contextmenu", "auxclick", "dragstart"];
 
   function renderFab() {
     const content = FAB_CONTENT[mode];
@@ -874,9 +934,9 @@
     setMode(null);
   });
 
-  document.addEventListener("mousedown", onMouseDown, true);
-  document.addEventListener("mousemove", onMouseMove, true);
-  document.addEventListener("mouseup", onMouseUp, true);
+  document.addEventListener("pointerdown", onPointerDown, true);
+  document.addEventListener("pointermove", onPointerMove, true);
+  document.addEventListener("pointerup", onPointerUp, true);
   document.addEventListener("click", onClick, true);
   document.addEventListener("keydown", onKeyDown, true);
   document.addEventListener("keyup", onKeyUp, true);

@@ -102,6 +102,9 @@ kbd {
   border-radius: 4px;
   padding: 1px 4px;
 }
+@media (prefers-color-scheme: dark) {
+  kbd { background: #FFFFFF; color: #414A5A; border: 1px solid #414A5A; }
+}
 
 /* Header ------------------------------------------------------------------ */
 .header {

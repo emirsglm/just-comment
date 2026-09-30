@@ -1,52 +1,46 @@
 # Privacy Policy — Just Comment
 
-_Last updated: 2026-09-29_
+**Last updated:** September 30, 2026
 
-Just Comment is a Chrome extension for leaving screenshots and comments on web pages
-while manually testing them. It is designed to never send data anywhere.
+## Summary
 
-## Data the extension handles
+Just Comment does not collect, transmit, or share any user data. All data stays on your device.
 
-When **you** click an element in comment mode, or select an area in screenshot mode, the
-extension creates a record containing:
+## Data Storage
 
-- a screenshot of the visible part of the current tab (cropped to your selection in
-  screenshot mode),
-- the comment you type,
-- the page URL and title,
-- in comment mode only: a CSS selector, tag name, id, class names, up to 160 characters
-  of the element's text, and its on-screen position,
-- in screenshot mode only: the selection type and its on-screen position.
+Comments, screenshots, and element metadata you capture are stored locally in your browser using `chrome.storage.local`. This data never leaves your device.
 
-## Where it is stored
+## Data Collection
 
-Records are stored only in `chrome.storage.local` on your computer. `chrome.storage.sync`
-is intentionally **not** used, so nothing is synced to your Google account.
+Just Comment does **not** collect:
 
-When you click **Download report**, an HTML file is generated in the browser and saved
-through Chrome's download dialog to a location you choose.
+- Personal information (name, email, address)
+- Authentication or financial information
+- Browsing history or web activity
+- Location data
+- Analytics or usage telemetry
 
-## What the extension does not do
+## Network Requests
 
-- It makes **no network requests** (no `fetch`, `XMLHttpRequest`, WebSocket, analytics,
-  or remote code).
-- It does not collect, sell, or transfer any data to the developer or third parties.
-- It does not run on any page until you open the popup and start a mode for that tab. It declares no `host_permissions` and no always-on content scripts.
+Just Comment makes **zero** network requests. The extension operates entirely offline. There are no servers, no APIs, and no third-party services involved.
 
 ## Permissions
 
 | Permission | Why it is needed |
 |---|---|
-| `activeTab` | Temporary access to the tab you invoke the extension on, to capture its screenshot. |
-| `scripting` | Injects the comment-mode UI into that tab only when you turn it on. |
-| `storage` | Keeps your comments locally until you delete them. |
-| `downloads` | Saves the HTML report you ask for. |
+| `activeTab` | Capture a screenshot of the tab you are actively working on |
+| `scripting` | Inject the overlay UI into the page when you activate a mode |
+| `storage` | Save your comments and screenshots locally on your device |
+| `downloads` | Save the HTML report file to your computer when you request it |
 
-## Deleting your data
+## Data Sharing
 
-Delete individual comments or use **Clear all** in the popup. Removing the extension
-also deletes all of its stored data.
+Just Comment does not sell, transfer, or share any data with third parties.
+
+## Data Deletion
+
+You can delete all stored data at any time by clicking "Clear All" in the extension popup. Uninstalling the extension also removes all stored data.
 
 ## Contact
 
-Questions: open an issue in the project's GitHub repository.
+If you have questions about this policy, open an issue at [github.com/emirsglm/web-app-test-tool](https://github.com/emirsglm/web-app-test-tool).
